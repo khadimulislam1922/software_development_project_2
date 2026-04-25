@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://via.placeholder.com/150/0d47a1/FFFFFF?text=Attendo" alt="Attendo Logo" width="120" style="border-radius: 50%;">
+  <img src="https://github.com/khadimulislam1922/software_development_project_2/blob/main/public/logo.png">
   
   <h1>🎓 Attendo</h1>
   <h3>Next-Gen Smart Biometric Attendance Ecosystem</h3>
