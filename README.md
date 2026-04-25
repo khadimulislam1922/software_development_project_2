@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/khadimulislam1922/software_development_project_2/blob/main/public/logo.png" alt="Attendo Logo" width="80" height="80">
+  <img src="https://github.com/khadimulislam1922/software_development_project_2/blob/main/public/logo.png" alt="Attendo Logo" width="150" height="150">
   
   <h1>🎓 Attendo</h1>
   <h3>Next-Gen Smart Biometric Attendance Ecosystem</h3>
