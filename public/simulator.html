@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Hardware Simulator</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #121212; color: white; text-align: center; padding-top: 50px; }
+        .device-box { background: #1e1e1e; padding: 40px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1); width: 350px; margin: auto; border: 1px solid #333; }
+        .screen { background: #000; color: #00ff00; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 16px; min-height: 20px; margin-bottom: 20px; border: 1px solid #333; }
+        input, select { width: 90%; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #2a2a2a; color: white; font-size: 16px; text-align: center; }
+        button { background: #00e5ff; color: #000; font-weight: bold; cursor: pointer; padding: 15px; width: 100%; border: none; border-radius: 50px; font-size: 20px; margin-top: 15px; box-shadow: 0 0 15px rgba(0,229,255,0.4); transition: 0.2s; }
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="device-box">
+        <h2 style="margin-top: 0;">📟 Biometric Scanner</h2>
+        
+        <div id="lcdScreen" class="screen">READY. PLACE FINGER.</div>
+        
+        <select id="deviceId">
+            <option value="DEV_25">Sensor: Room 25 (Series 25)</option>
+            <option value="DEV_24">Sensor: Room 24 (Series 24)</option>
+            <option value="DEV_23">Sensor: Room 23 (Series 23)</option>
+            <option value="DEV_22">Sensor: Room 22 (Series 22)</option>
+            <option value="DEV_21">Sensor: Room 21 (Series 21)</option>
+        </select>
+        
+        <input type="number" id="fingerId" placeholder="Enter Finger ID (e.g., 74 or 2210021)" required>
+        
+        <button onclick="sendPunch()">👆 PLACE FINGER</button>
+    </div>
+
+    <script>
+        async function sendPunch() {
+            const device_id = document.getElementById('deviceId').value;
+            const finger_id = document.getElementById('fingerId').value;
+            const screen = document.getElementById('lcdScreen');
+
+            if(!finger_id) {
+                screen.style.color = "red";
+                screen.innerText = "ERR: NO FINGER DETECTED";
+                return;
+            }
+
+            screen.style.color = "yellow";
+            screen.innerText = "SCANNING...";
+
+            try {
+                const res = await fetch('http://localhost:8000/api/attendance/punch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ finger_id, device_id })
+                });
+                
+                const data = await res.json();
+                
+                screen.style.color = data.error ? "#ff4757" : "#00ff00";
+                screen.innerText = data.error || data.message;
+            } catch (e) {
+                screen.style.color = "red";
+                screen.innerText = "ERR: SERVER OFFLINE";
+            }
+        }
+    </script>
+</body>
+</html>

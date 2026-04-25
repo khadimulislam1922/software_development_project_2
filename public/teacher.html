@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendo | Teacher Dashboard</title>
+    <script src="teacher.js" defer></script>
+    <style>
+        :root {
+            --primary-blue: #1a2a4b; 
+            --accent-color: #0d47a1;
+            --bg-color: #f4f7f6;
+            --card-bg-color: #ffffff;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --border-radius: 12px;
+            --transition-smooth: all 0.3s ease;
+            --border-color: #eeeeee;
+        }
+
+        body.dark-theme {
+            --primary-blue: #00e5ff;
+            --accent-color: #00b3cc;
+            --bg-color: #121212;
+            --card-bg-color: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #333333;
+        }
+
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 40px 20px; transition: var(--transition-smooth); }
+
+        .dashboard-card { background: var(--card-bg-color); padding: 30px; border-radius: var(--border-radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; border: 1px solid var(--border-color); transition: var(--transition-smooth); }
+
+        .login-input { padding: 12px; width: 90%; margin-bottom: 15px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--bg-color); color: var(--text-main); }
+        .login-input:focus { border-color: var(--accent-color); outline: none; }
+
+        .login-btn { padding: 12px 30px; background-color: var(--accent-color); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 90%; margin-bottom: 10px; }
+        .login-btn:hover { opacity: 0.9; }
+
+        .profile-container { position: relative; display: inline-block; margin-bottom: 10px; }
+        .profile-pic { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-color); background: white; }
+        .upload-badge { position: absolute; bottom: 0; right: 0; background: var(--accent-color); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 14px; border: 2px solid var(--card-bg-color); }
+        
+        /* Table Styles */
+        .live-table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: left; }
+        .live-table th { background-color: var(--primary-blue); color: white; padding: 10px; }
+        .live-table td { padding: 10px; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard-section" style="max-width: 1000px; margin: 0 auto;">
+        
+        <header class="dashboard-card" style="display: flex; flex-direction: column; align-items: center; position: relative; margin-bottom: 20px; padding-top: 20px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="logo.png" alt="Attendo" style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-color); background: white; object-fit: cover;">
+                    <h3 style="color: var(--primary-blue); margin: 0; font-size: 20px; font-weight: bold;">Attendo<span style="color: var(--accent-color);">.</span></h3>
+                </div>
+                <button onclick="toggleTheme()" id="themeBtn" style="background: none; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 12px; font-size: 14px; cursor: pointer; transition: 0.3s;">🌙 Theme</button>
+            </div>
+
+            <div class="profile-container">
+                <img id="profilePic" src="https://ui-avatars.com/api/?name=Teacher&background=0D47A1&color=fff&size=100" alt="Profile" class="profile-pic">
+                <label for="picUpload" class="upload-badge">📷</label>
+                <input type="file" id="picUpload" accept="image/*" style="display: none;" onchange="changeProfilePic(event)">
+            </div>
+
+            <h2 id="teacherNameDisplay" style="margin: 5px 0 0 0; color: var(--text-main);">Loading Name...</h2>
+            <h4 id="teacherDesignation" style="margin: 5px 0; color: var(--accent-color); font-weight: 600;">Faculty Member</h4>
+            <p style="margin: 0; color: var(--text-muted); font-size: 14px;">Department of <span id="teacherDept">ECE</span></p>
+            
+            <div style="margin-top: 20px; width: 100%; max-width: 250px; text-align: center;">
+                <button onclick="toggleTeacherPasswordForm()" style="background: none; border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; width: 100%; margin-bottom: 10px;">🔑 Change Password</button>
+                
+                <div id="teacherPasswordForm" style="display: none; text-align: left;">
+                    <input type="password" id="tOldPassword" placeholder="Current Password" class="login-input" style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 8px;">
+                    <input type="password" id="tNewPassword" placeholder="New Password" class="login-input" style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 8px;">
+                    <button onclick="changeTeacherPassword()" class="login-btn" style="width: 100%; padding: 10px; font-size: 14px;">Update</button>
+                </div>
+            </div>
+
+            <button onclick="logout()" class="login-btn" style="position: absolute; bottom: 20px; right: 20px; width: auto; background-color: #d32f2f; padding: 8px 15px; font-size: 14px;">Logout</button>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            
+            <div class="dashboard-card" style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; border-top: 4px solid var(--accent-color);">
+                <h3 style="color: var(--primary-blue); margin-top: 0;">🚦 Manual Session Control</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">Start or stop a class session manually without hardware.</p>
+                
+                <div style="display: flex; gap: 15px; width: 100%; max-width: 600px; margin-bottom: 15px;">
+                    <select id="manualCourseSelect" class="login-input" style="flex: 1; margin-bottom: 0;">
+                        <option value="" disabled selected>Loading courses...</option>
+                    </select>
+
+                    <select id="manualDeviceSelect" class="login-input" style="flex: 1; margin-bottom: 0;">
+                        <option value="DEV_25">Room 25 (Series 25)</option>
+                        <option value="DEV_24">Room 24 (Series 24)</option>
+                        <option value="DEV_23">Room 23 (Series 23)</option>
+                        <option value="DEV_22">Room 22 (Series 22)</option>
+                        <option value="DEV_21">Room 21 (Series 21)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px; width: 100%; max-width: 600px;">
+                    <button onclick="toggleManualSession('start')" class="login-btn" style="background-color: #2ed573; color: #121212; flex: 1; margin-bottom: 0; font-size: 16px;">▶ Start Session</button>
+                    <button onclick="toggleManualSession('stop')" class="login-btn" style="background-color: #ff4757; color: white; flex: 1; margin-bottom: 0; font-size: 16px;">⏹ Stop Session</button>
+                </div>
+            </div>
+
+            <div class="dashboard-card" style="display: flex; flex-direction: column; align-items: center;">
+                <h3 style="color: var(--primary-blue);">📡 Live Attendance</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">Monitor real-time fingerprint punches.</p>
+                
+                <select id="liveCourseSelect" class="login-input" style="width: 100%;">
+                    <option value="" disabled selected>Loading courses...</option>
+                </select>
+
+                <button onclick="toggleLiveMonitor()" id="liveBtn" class="login-btn" style="background-color: #2e7d32;">Start Live Monitor</button>
+
+                <div id="liveTableSection" style="display: none; width: 100%; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 15px; max-height: 300px; overflow-y: auto;">
+                    <table class="live-table">
+                        <thead>
+                            <tr>
+                                <th>Roll</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3 style="color: var(--primary-blue);">📊 Reports & Excel</h3>
+                <p style="color: var(--text-muted); font-size: 14px;">Upload CT marks or download attendance.</p>
+                
+                <select id="courseSelect" class="login-input" style="width: 100%;">
+                    <option value="" disabled selected>Loading courses...</option>
+                </select>
+
+                <input type="file" id="excelFile" accept=".xlsx, .xls" class="login-input" style="width: 100%;">
+                <button onclick="uploadExcel()" id="uploadExcelBtn" class="login-btn">Upload & Calculate CT</button>
+                
+                <button onclick="downloadAttendanceReport()" class="login-btn" style="background-color: #f39c12;">📥 Download Report (Excel)</button>
+            </div>
+
+            <div style="margin-top: 15px; text-align: left; grid-column: span 2;">
+                <h4 style="color: var(--text-main); margin-bottom: 10px;">📚 Assigned Courses</h4>
+                <ul id="assignedCoursesList" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px;"></ul>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

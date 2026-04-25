@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendo | Login</title>
+    <style>
+        :root {
+            --primary-blue: #0d47a1; 
+            --accent-cyan: #00bcd4;  
+            --accent-purple: #8e24aa; 
+            --bg-color: #f0f4f8;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            overflow: hidden;
+        }
+
+        /* 🚀 Animated Background Elements */
+        .bg-shape {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .shape1 { width: 400px; height: 400px; background: rgba(0, 188, 212, 0.4); top: -100px; left: -100px; border-radius: 50%; }
+        .shape2 { width: 500px; height: 500px; background: rgba(142, 36, 170, 0.3); bottom: -150px; right: -100px; border-radius: 50%; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 🚀 Login Card */
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-cyan);
+            object-fit: cover;
+            margin-bottom: 20px;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+        }
+
+        h2 {
+            margin: 0 0 5px 0;
+            color: var(--primary-blue);
+        }
+
+        p {
+            margin: 0 0 25px 0;
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+
+        /* 🚀 Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 0;
+            font-weight: bold;
+            color: var(--text-sub);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-blue);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* 🚀 Inputs */
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            box-sizing: border-box;
+            background: rgba(255,255,255,0.9);
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(142, 36, 170, 0.1);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 71, 161, 0.3);
+        }
+
+        #error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+
+    <div class="login-card">
+        <img src="logo.png" alt="Attendo Logo" class="logo">
+        <h2>Welcome to Attendo</h2>
+        <p>Smart Attendance Management System</p>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('student')" id="tab-student">🎓 Student</div>
+            <div class="tab" onclick="switchTab('teacher')" id="tab-teacher">👨‍🏫 Teacher</div>
+            <div class="tab" onclick="switchTab('admin')" id="tab-admin">🛡️ Admin</div>
+        </div>
+
+        <div class="input-group">
+            <label id="lbl-id">Roll Number</label>
+            <input type="text" id="userId" class="input-field" placeholder="e.g. 2210021">
+        </div>
+        
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="userPass" class="input-field" placeholder="Enter your password">
+        </div>
+
+        <button class="btn-login" onclick="processLogin()">Login to Dashboard</button>
+        <div id="error-msg">Incorrect credentials!</div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

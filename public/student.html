@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendo | Student Dashboard</title>
+    <script src="student.js" defer></script>
+    <style>
+        /* --- CSS VARIABLES FOR THEME SWITCHING --- */
+        :root {
+            --primary-blue: #1a2a4b; 
+            --accent-color: #0d47a1;
+            --bg-color: #f4f7f6;
+            --card-bg-color: #ffffff;
+            --text-main: #333333;
+            --text-sub: #777777;
+            
+            /* Status Colors */
+            --good-bg: rgba(0, 191, 255, 0.1);  
+            --good-text: #0d47a1; 
+            --bad-bg: rgba(255, 105, 180, 0.1);  
+            --bad-text: #c62828; 
+
+            --shadow-subtle: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --transition-smooth: all 0.3s ease;
+            --border-radius: 12px;
+            --border-color: #eeeeee;
+        }
+
+        /* --- DARK THEME OVERRIDES --- */
+        body.dark-theme {
+            --primary-blue: #00e5ff;
+            --accent-color: #00b3cc;
+            --bg-color: #121212;
+            --card-bg-color: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-sub: #a0a0a0;
+            --border-color: #333333;
+            
+            --good-bg: rgba(0, 191, 255, 0.2); 
+            --bad-bg: rgba(255, 105, 180, 0.2);
+        }
+
+        /* --- RESET AND BASE STYLES --- */
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h2, h3, h4 { margin: 0; font-weight: 600; }
+        p { margin: 5px 0; color: var(--text-sub); }
+
+        /* --- 1. LOGIN SECTION STYLE --- */
+        #login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
+
+        .login-card {
+            background-color: var(--card-bg-color);
+            padding: 50px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-subtle);
+            text-align: center;
+            width: 350px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+        }
+
+        .login-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+       .login-logo {
+            width: 200px; 
+            max-width: 100%;
+            object-fit: contain; 
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            padding: 12px;
+            width: 90%;
+            margin-bottom: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: var(--transition-smooth);
+        }
+
+        .login-input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        .login-btn {
+            padding: 12px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition-smooth);
+            width: 90%;
+        }
+
+        .login-btn:hover { opacity: 0.9; }
+
+        /* --- 2. DASHBOARD SECTION STYLE --- */
+        #dashboard-section {
+            display: none; 
+            padding-top: 20px;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo-group img {
+            height: 50px; 
+            object-fit: contain;
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .theme-btn, .logout-btn {
+            padding: 8px 15px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .theme-btn:hover, .logout-btn:hover {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .logout-btn:hover { background-color: #d32f2f; border-color: #d32f2f; }
+
+        .profile-block {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .profile-img-nav {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-color);
+            background: white;
+        }
+
+        /* Page Layout - Two Columns */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Cards Style */
+        .card {
+            background-color: var(--card-bg-color);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-subtle);
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+        }
+        
+        .card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .card h3 { margin-bottom: 20px; color: var(--primary-blue); }
+
+        /* Stats Block */
+        .stats-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+        }
+
+        .stat-box h2 { font-size: 36px; margin-bottom: 5px; }
+        .cgpa-stat { color: var(--accent-color); } 
+        .att-stat { color: #2e7d32; } 
+
+        /* --- TABLE STYLE --- */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th { font-size: 14px; color: var(--text-sub); text-transform: uppercase; }
+        tr { transition: var(--transition-smooth); }
+        tr:hover { background-color: var(--bg-color); }
+
+        /* Status Colors */
+        .status-good span {
+            display: inline-block; padding: 5px 12px;
+            background-color: var(--good-bg); color: var(--good-text);
+            border-radius: 20px; font-weight: bold; font-size: 13px;
+        }
+        
+        .status-bad span {
+            display: inline-block; padding: 5px 12px;
+            background-color: var(--bad-bg); color: var(--bad-text);
+            border-radius: 20px; font-weight: bold; font-size: 13px;
+        }
+
+        /* Minimal profile card on right */
+        .profile-summary-card { text-align: center; }
+        
+       .profile-img-card {
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; border: 4px solid var(--accent-color);
+            margin: 0 auto 20px auto; display: block; background: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .dashboard-header { flex-direction: column; gap: 15px; }
+            .controls-group { flex-wrap: wrap; justify-content: center; }
+        }
+
+        /* Fade Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card, .dashboard-header { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="login-section">
+        <div class="login-card">
+            <h1 style="color: var(--primary-blue); margin-bottom: 20px;">Attendo<span style="color: var(--accent-color);">.</span></h1>
+            <h2>Welcome Back</h2>
+            <p>Enter your credentials to view dashboard.</p><br>
+            <input type="text" id="rollInput" placeholder="Enter Roll Number" class="login-input">
+            <input type="password" id="passwordInput" placeholder="Enter Password" class="login-input">
+            <button onclick="login()" class="login-btn">Log In</button>
+        </div>
+    </div>
+
+    <div id="dashboard-section">
+        
+        <header class="dashboard-header card">
+            <div class="logo-group" style="display: flex; align-items: center; gap: 12px;">
+                <img src="logo.png" alt="Attendo Logo" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); background: white;">
+                <h2 style="color: var(--primary-blue); margin: 0;">Attendo<span style="color: var(--accent-color);">.</span></h2>
+            </div>
+            
+            <div class="controls-group">
+                <button onclick="toggleTheme()" class="theme-btn" id="themeBtn">🌙 Theme</button>
+                <div class="profile-block">
+                    <img src="https://ui-avatars.com/api/?name=Student&background=0D47A1&color=fff" alt="Profile" id="navProfilePic" class="profile-img-nav">
+                    <div>
+                        <h4 id="studentName">Loading Name...</h4>
+                        <p>Roll: <span id="profileRoll">-----</span> | Series: <span id="profileSeries">--</span></p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <main>
+                <div class="card">
+                    <h3>Overall Performance</h3>
+                    <div class="stats-group">
+                        <div class="stat-box">
+                            <h2 id="cgpaStat" class="cgpa-stat">0.00</h2>
+                            <p>Overall CGPA</p>
+                        </div>
+                        <div class="stat-box">
+                            <h2 id="totalAttStat" class="att-stat">0%</h2>
+                            <p>Total Attendance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Running Courses (ECE)</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+    <tr>
+        <th>Code</th>
+        <th>Course Name</th>
+        <th>Credit</th> <th>Attendance %</th>
+        <th>Avg. CT (Best 3)</th>
+    </tr>
+</thead>
+                            <tbody id="courseTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <aside>
+                <div class="card profile-summary-card">
+                    <div style="position: relative; display: inline-block;">
+                        <img src="https://ui-avatars.com/api/?name=Student&background=0D47A1&color=fff" alt="Profile" id="cardProfilePic" class="profile-img-card">
+                        
+                        <label for="dpInput" style="cursor: pointer; display: block; margin-top: -15px; margin-bottom: 15px; color: var(--accent-color); font-size: 14px; font-weight: bold;" id="uploadBtnText">
+                            📷 Change Picture
+                        </label>
+                        <input type="file" id="dpInput" style="display: none;" accept="image/*" onchange="uploadProfilePic(event)">
+                    </div>
+                    
+                    <h3 id="profileNameCard">Student Name</h3>
+                    <p style="font-weight: 500; color: var(--text-main);">Department of ECE</p>
+                    <p>RUET</p>
+
+                    <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                        <button onclick="togglePasswordForm()" class="theme-btn" style="width: 100%; margin-bottom: 15px; background: var(--bg-color);">🔑 Change Password</button>
+                        
+                        <div id="passwordForm" style="display: none; text-align: left; transition: var(--transition-smooth);">
+                            <input type="password" id="oldPassword" placeholder="Current Password" class="login-input" style="width: 100%; box-sizing: border-box;">
+                            <input type="password" id="newPassword" placeholder="New Password" class="login-input" style="width: 100%; box-sizing: border-box;">
+                            <button onclick="changePassword()" class="login-btn" style="width: 100%;">Update Password</button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
